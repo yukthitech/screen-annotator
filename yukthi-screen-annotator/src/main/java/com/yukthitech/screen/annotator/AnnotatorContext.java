@@ -3,16 +3,23 @@ package com.yukthitech.screen.annotator;
 import java.awt.Color;
 import java.awt.Point;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class AnnotatorContext
 {
+	private static Logger logger = LogManager.getLogger(AnnotatorContext.class);
+	
+	private static final float ZOOM_STEP = 0.25f;
+	
 	private int thickness = 3;
 	
 	private Color color = Color.red;
 	
-	private int zoomFactor = 1;
+	private float zoomFactor = 1;
 	
 	private Point zoomPoint;
-
+	
 	public int getThickness()
 	{
 		return thickness;
@@ -35,18 +42,24 @@ public class AnnotatorContext
 	
 	public boolean zoom(boolean increment, Point zoomPoint)
 	{
+		logger.debug("From zoom-factor '{}' {} zoom at point {}", 
+				zoomFactor, 
+				(increment ? "incrementing" : "decrementing"),
+				zoomPoint);
+		
 		if(!increment && zoomFactor <= 1)
 		{
-			return false;
+			zoomFactor = 1;
+			return true;
 		}
 		
 		if(increment)
 		{
-			zoomFactor ++;
+			zoomFactor += ZOOM_STEP;
 		}
 		else
 		{
-			zoomFactor--;
+			zoomFactor -= ZOOM_STEP;
 		}
 		
 		this.zoomPoint = zoomPoint;
@@ -54,7 +67,7 @@ public class AnnotatorContext
 		return true;
 	}
 	
-	public int getZoomFactor()
+	public float getZoomFactor()
 	{
 		return zoomFactor;
 	}
@@ -62,5 +75,11 @@ public class AnnotatorContext
 	public Point getZoomPoint()
 	{
 		return zoomPoint;
+	}
+	
+	public void reset()
+	{
+		zoomFactor = 1;
+		zoomPoint = null;
 	}
 }

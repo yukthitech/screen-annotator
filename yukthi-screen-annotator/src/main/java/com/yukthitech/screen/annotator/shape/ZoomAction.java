@@ -11,10 +11,10 @@ public class ZoomAction implements IAction
 	public boolean finalizeLocation(int x, int y, int button, AnnotatorContext context)
 	{
 		//adjust x & y according to current zoom factor
-		x = x / context.getZoomFactor();
-		y = y / context.getZoomFactor();
+		float fx = x / context.getZoomFactor();
+		float fy = y / context.getZoomFactor();
 		
 		//zoom
-		return context.zoom(button == MouseEvent.BUTTON1, new Point(x, y));
+		return context.zoom(button == MouseEvent.BUTTON1, new Point((int) fx, (int) fy));
 	}
 }

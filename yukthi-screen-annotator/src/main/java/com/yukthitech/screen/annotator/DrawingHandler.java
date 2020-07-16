@@ -38,6 +38,12 @@ public class DrawingHandler implements MouseListener, MouseMotionListener
 		contentPane.addMouseListener(this);
 		contentPane.addMouseMotionListener(this);
 	}
+	
+	public void reset()
+	{
+		context.reset();
+		actions.clear();
+	}
 
 	public void setCurrentActionType(Class<? extends IAction> currentActionType) 
 	{
@@ -88,7 +94,6 @@ public class DrawingHandler implements MouseListener, MouseMotionListener
 	public void mouseReleased(MouseEvent e)
 	{
 		currentAction.moveEndPointTo(e.getX(), e.getY());
-		
 		
 		if(currentAction.finalizeLocation(e.getX(), e.getY(), e.getButton(), context))
 		{

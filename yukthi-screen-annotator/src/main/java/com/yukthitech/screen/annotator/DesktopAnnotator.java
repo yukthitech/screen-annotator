@@ -28,9 +28,6 @@ import org.apache.logging.log4j.Logger;
 import com.melloware.jintellitype.HotkeyListener;
 import com.melloware.jintellitype.JIntellitype;
 import com.yukthitech.screen.annotator.shape.IAction;
-import com.yukthitech.screen.annotator.shape.LineAction;
-import com.yukthitech.screen.annotator.shape.RectAction;
-import com.yukthitech.screen.annotator.shape.ZoomAction;
 
 public class DesktopAnnotator
 {
@@ -119,27 +116,27 @@ public class DesktopAnnotator
 		}
 		else
 		{
-			int zoomFactor = context.getZoomFactor();
-			int w = currentSpanshot.getWidth() * zoomFactor, h = currentSpanshot.getHeight() * zoomFactor;
+			float zoomFactor = context.getZoomFactor();
+			float w = currentSpanshot.getWidth() * zoomFactor, h = currentSpanshot.getHeight() * zoomFactor;
 			
-			int centerX = w / 2, centerY = h / 2;
-			int zoomX = zoomFactor * context.getZoomPoint().x, zoomY = context.getZoomPoint().y;
+			float centerX = w / 2, centerY = h / 2;
+			float zoomX = zoomFactor * context.getZoomPoint().x, zoomY = context.getZoomPoint().y;
 			
-			int finalX = centerX - zoomX;
-			int finalY = centerY - zoomY;
+			float finalX = centerX - zoomX;
+			float finalY = centerY - zoomY;
 			
 			finalX = finalX > 0 ? 0 : finalX;
 			finalY = finalY > 0 ? 0 : finalY;
 					
-			g.drawImage(currentSpanshot, finalX, finalX, w, h, null);
+			g.drawImage(currentSpanshot, (int) finalX, (int) finalX, (int) w, (int) h, null);
 		}
 	}
 
 	private void paintDrawingPane(Graphics2D g)
 	{
-		List<IAction> shapes = drawingHandler.getActions();
-
-		for(IAction shape : shapes)
+		List<IAction> actions = drawingHandler.getActions();
+		
+		for(IAction shape : actions)
 		{
 			shape.draw(g, context);
 		}
@@ -201,36 +198,19 @@ public class DesktopAnnotator
 		
 		drawingPane.setCursor(option.getCursor());
 		
-		switch(option)
+		if(option == AnnotationOption.ESCAPE)
 		{
-			case ESCAPE:
-			{
-				desktopFrame.setVisible(false);
-				break;
-			}
-			case UNDO:
-			{
-				drawingHandler.removeLastShape();
-				break;
-			}
-			case RECT:
-			{
-				displayAnnotationScreen();
-				drawingHandler.setCurrentActionType(RectAction.class);
-				break;
-			}
-			case LINE:
-			{
-				displayAnnotationScreen();
-				drawingHandler.setCurrentActionType(LineAction.class);
-				break;
-			}
-			case ZOOM:
-			{
-				displayAnnotationScreen();
-				drawingHandler.setCurrentActionType(ZoomAction.class);
-				break;
-			}
+			desktopFrame.setVisible(false);
+			drawingHandler.reset();
+		}
+		else if (option == AnnotationOption.UNDO)
+		{
+			drawingHandler.removeLastShape();
+		}
+		else
+		{
+			displayAnnotationScreen();
+			drawingHandler.setCurrentActionType(option.getActionType());
 		}
 	}
 
